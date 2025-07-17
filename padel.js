@@ -1,3 +1,6 @@
+/* const readline = import('readline'); */
+import readline from "readline";
+
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -22,7 +25,9 @@ async function menu1() {
         
         console.log("\nPARTIDO DE PADEL");
         console.log("1. Ingresar nombre de los jugadores");
-        console.log("2. Salir");
+        console.log("2. Ingresa nombre de los jugadores");
+
+        console.log("3. Salir");
         opcion = parseInt(await leeMenu("Seleccione opción: "));
 
         switch (opcion) {
