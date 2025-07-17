@@ -89,7 +89,7 @@ async function menu1() {
                             puntuacionValida = true;
                         } else {
                             console.log("⚠️ Entrada inválida para el tie-break. Se repite el set. ⚠️ ");
-                            continue; // vuelve a pedir el mismo set
+                            continue;// lo mismo
                         }
                     }
 
