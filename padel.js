@@ -50,42 +50,80 @@ async function menu1() {
                 let setsEquipoA = 0;
                 let setsEquipoB = 0;
 
-                const puntuaciones = []; // Array para guardar los sets
+                const puntuaciones = [];
 
-                for (let i = 1; i <= 3; i++) {
+                for (let i = 1; i <= 99999; i++) {
                     console.log(`Set ${i}`);
-                    let puntuacionEquipoA = await leeMenu(`Puntuación Equipo A - Set ${i}`);
-                    let puntuacionEquipoB = await leeMenu(`Puntuación Equipo B - Set ${i}`);
 
-                    // Guardar en el array
-                    puntuaciones.push({
-                        set: i,
-                        equipoA: puntuacionEquipoA,
-                        equipoB: puntuacionEquipoB
-                    });
+                    let puntuacionEquipoA = parseInt(await leeMenu(`Puntuación Equipo A (Set ${i}):`));
+                    let puntuacionEquipoB = parseInt(await leeMenu(`Puntuación Equipo B (Set ${i}):`));
 
-                    // Comparar puntuaciones
-                    if (puntuacionEquipoA > puntuacionEquipoB) {
-                        setsEquipoA++;
-                        console.log(`Equipo A gana el Set ${i}`);
-                    } else if (puntuacionEquipoB > puntuacionEquipoA) {
-                        setsEquipoB++;
-                        console.log(`Equipo B gana el Set ${i}`);
-                    } else {
-                        console.log(`Set ${i} empatado (no cuenta para nadie)`);
+                    // Validar que no superen 7 (salvo que permitas sets largos)
+                    if (puntuacionEquipoA > 7 || puntuacionEquipoB > 7) {
+                        console.log("❌ Puntuaciones inválidas (no pueden pasar de 7) ❌");
+                        continue;
                     }
 
-                    // Verificar si algún equipo ya ganó 2 sets
-                    if (setsEquipoA === 2 || setsEquipoB === 2) {
-                        break; // No hace falta seguir jugando
+                    let diferencia = Math.abs(puntuacionEquipoA - puntuacionEquipoB);
+                    let puntuacionValida = false;
+                    let ganador = null;
+
+                    // Caso 1: victoria normal con diferencia de 2 y mínimo 6 juegos
+                    if ((puntuacionEquipoA >= 6 || puntuacionEquipoB >= 6) && diferencia === 2) {
+                        puntuacionValida = true;
+                        ganador = puntuacionEquipoA > puntuacionEquipoB ? 'A' : 'B';
+
+                        // Caso 2: empate 6-6 → tie-break
+                    } else if (puntuacionEquipoA === 6 && puntuacionEquipoB === 6) {
+                        console.log("🎾 ¡Tie-break!");
+
+                        let ganadorTieBreak = await leeMenu("¿Quién ganó el tie-break? (A/B):");
+                        //sumamos un punto al equipo que elegimos de ganador
+                        if (ganadorTieBreak.toUpperCase() === 'A') {
+                            puntuacionEquipoA = 7;
+                            puntuacionEquipoB = 6;
+                            ganador = 'A';
+                            puntuacionValida = true;
+                        } else if (ganadorTieBreak.toUpperCase() === 'B') {
+                            puntuacionEquipoA = 6;
+                            puntuacionEquipoB = 7;
+                            ganador = 'B';
+                            puntuacionValida = true;
+                        } else {
+                            console.log("⚠️ Entrada inválida para el tie-break. Se omite este set.⚠️");
+                            continue;
+                        }
+                    }
+
+                    if (puntuacionValida) {
+                        puntuaciones.push({
+                            set: i,
+                            equipoA: puntuacionEquipoA,
+                            equipoB: puntuacionEquipoB
+                        });
+
+                        if (ganador === 'A') {
+                            setsEquipoA++;
+                            console.log("✅ El set lo gana el Equipo A");
+                        } else if (ganador === 'B') {
+                            setsEquipoB++;
+                            console.log("✅ El set lo gana el Equipo B");
+                        }
+                    } else {
+                        console.log("❌ Puntuación no válida. No se suma este set.");
                     }
                 }
+
 
                 console.log("\nResumen del Partido:");
                 puntuaciones.forEach((set) => {
                     console.log(`Set ${set.set}: Equipo A ${set.equipoA} - Equipo B ${set.equipoB}`);
                 });
-
+                if(setsEquipoA== 0 && setsEquipoB==2){
+                    console.log("🏆 ¡Equipo B gana el partido!");
+                }else if(setsEquipoA== 2 && setsEquipoB==0){
+                    console.log("🏆 ¡Equipo A gana el partido!");
+                }
                 console.log("\nResultado Final:");
                 if (setsEquipoA > setsEquipoB) {
                     console.log("🏆 ¡Equipo A gana el partido!");
